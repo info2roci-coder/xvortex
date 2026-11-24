@@ -3,8 +3,8 @@
 Personal financial intelligence platform: loan management, market monitoring, paper trading
 (simulated only, never real orders), analytics and an optional AI assistant.
 
-**Status: phase 2 of 10 (authentication and design system).** Modules arrive in phases 3 to 8; until then
-their pages say so and show no sample data.
+**Status: phase 3 of 10 (Command Center).** Loans, Market, Paper Trading, Analytics and the Assistant arrive in
+phases 4 to 8; until then their pages say so and show no sample data.
 
 ## Repository layout
 
@@ -76,6 +76,17 @@ Add each domain in Render (Settings > Custom Domains), then create the matching 
 records, they must allow Let's Encrypt. Both hosts share `xvortex.se`, which is what lets the session
 cookie work between the app and the API.
 
+## Command Center (phase 3)
+
+- `GET /api/dashboard/summary` is computed from the signed-in user's own rows on every request; there is no demo data.
+- Loan totals are grouped by currency and never added across currencies. Outstanding principal and remaining
+  interest come from the stored repayment schedule and recorded payments (oldest installment first, interest before principal).
+- Paper trading shows cash, invested amount at cost and realized profit/loss. Market value and unrealized
+  profit/loss are reported as unavailable until a price source exists (phase 5); they are never estimated.
+- Market watch and news show an explicit "not connected" note instead of placeholder quotes or headlines.
+- Widget order and visibility are saved per user via `PUT /api/settings/dashboard-layout`.
+- The bell in the top bar reads `GET /api/notifications` (each user sees only their own).
+
 ## Design notes
 
 - Money, prices and quantities are `NUMERIC`/`Decimal`, never floats.
@@ -85,5 +96,5 @@ cookie work between the app and the API.
 
 ## Roadmap
 
-1 Architecture and database · **2 Auth and design system (this commit)** · 3 Command Center · 4 Loans ·
+1 Architecture and database · 2 Auth and design system · **3 Command Center (this commit)** · 4 Loans ·
 5 Market intelligence · 6 Paper trading · 7 Analytics · 8 AI assistant · 9 Security and tests · 10 Final deploy
