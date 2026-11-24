@@ -1,4 +1,4 @@
-# Render Blueprint. Phase 1: backend API only. The frontend static site is added in Phase 2.
+# Render Blueprint: API (Python web service) and frontend (static site).
 services:
   - type: web
     name: xvortex-api
@@ -19,3 +19,31 @@ services:
         generateValue: true
       - key: CORS_ORIGINS
         value: https://app.xvortex.se
+      - key: ADMIN_EMAIL
+        sync: false          # first administrator (used only if no users exist yet)
+      - key: ADMIN_PASSWORD
+        sync: false          # 12+ characters; delete this variable after first login
+
+  - type: web
+    name: xvortex-app
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://api.xvortex.se
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
