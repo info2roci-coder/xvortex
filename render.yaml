@@ -1,0 +1,21 @@
+# Render Blueprint. Phase 1: backend API only. The frontend static site is added in Phase 2.
+services:
+  - type: web
+    name: xvortex-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false          # paste your Neon connection string in the Render dashboard
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://app.xvortex.se
